@@ -81,7 +81,7 @@ function editItem(id) {
     });
     $('#spoiler').css({ 'display': 'block' });
 }
-
+//update 
 $('.my-form').on('submit', function () {
     const item = {
         'name': $('#edit-name').val(),
