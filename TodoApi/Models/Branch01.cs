@@ -9,4 +9,5 @@ public class Branch01
         public string Age { get; set; }
         [Column("name")]
         public string Name { get; set; }
+        public int CategoryId { get; set; }
     }
