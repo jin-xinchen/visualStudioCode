@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ namespace TodoApi.Models
         public TodoContext(DbContextOptions<TodoContext> options)
             : base(options)
         {
-            
+            System.Console.WriteLine("-------------------------------------> DbContext");
             
         }
 
@@ -32,6 +33,7 @@ namespace TodoApi.Models
             int ver = -1;
             greeting = "";
             testDate = "";
+            test="";
 
             try
             {
