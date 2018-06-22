@@ -9,12 +9,16 @@ namespace TodoApi.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly TodoContext _context;  
+        static ulong CountDbContext=0L;
+        ulong CountDbContext1=0L;
 
         public TodoController(TodoContext context)
         {
+            var s = Request;
             _context = context;
-
+            System.Console.WriteLine("=Start:"+ ++CountDbContext +"==============");
+            System.Console.WriteLine("=Start:"+ ++CountDbContext1 +"=======instance=======");
             if (_context.TodoItems.Count() == 0)
             {
                 _context.TodoItems.Add(new TodoItem { Name = "Item1" });
@@ -23,8 +27,18 @@ namespace TodoApi.Controllers
         }
 
         [HttpGet]
+        // public ActionResult<List<TodoItem>> GetAll([FromQuery]object request)//) ok
+        //  public ActionResult<List<TodoItem>> GetAll([FromBody]object request)//error
+        //  public ActionResult<List<TodoItem>> GetAll([FromRoute]object request)//ok
+        //   public ActionResult<List<TodoItem>> GetAll([FromForm]object request)//ok
+        // public ActionResult<List<TodoItem>> GetAll([FromHeader]object request)//ok
+        // public ActionResult<List<TodoItem>> GetAll([FromServices]object request)//error
         public ActionResult<List<TodoItem>> GetAll()
         {
+            //  System.Console.WriteLine("==RequireHttpsAttribute==>:"+
+            //  $"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}"+request.ToString());
+            // System.Console.WriteLine("==RequireHttpsAttribute==>:"+$"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}");
+            var s = Request;
             return _context.TodoItems.ToList();
         }
 

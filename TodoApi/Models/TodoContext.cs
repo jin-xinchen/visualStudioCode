@@ -7,6 +7,8 @@ namespace TodoApi.Models
         public TodoContext(DbContextOptions<TodoContext> options)
             : base(options)
         {
+            System.Console.WriteLine("-------------------------------------> DbContext");
+            
         }
 
         public DbSet<TodoItem> TodoItems { get; set; }
