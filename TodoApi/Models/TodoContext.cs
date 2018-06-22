@@ -28,7 +28,7 @@ namespace TodoApi.Models
             return result;
         }
 
-          public int GetWelcomInfo(string id, out string greeting, out string testDate)
+          public int GetWelcomInfo(string id, out string greeting, out string testDate, out string test)
         {
             int ver = -1;
             greeting = "";
@@ -44,14 +44,16 @@ namespace TodoApi.Models
                 sqlOutGreeting.Direction = ParameterDirection.Output;
                 sqlOutGreeting.Size = 500;
 
-                
+                var sqlOutTest = new SqlParameter("test",  SqlDbType.VarChar, 250);
+                sqlOutTest.Direction = ParameterDirection.Output;
                
                 var sqlOutTestDate= new SqlParameter("testDate", SqlDbType.VarChar);
                 sqlOutTestDate.Direction = ParameterDirection.Output;
                 sqlOutTestDate.Size = 10;
 
-                var result = this.Database.ExecuteSqlCommand("exec dbo.nyra_GetWelcomeInfo @id, @ver OUT, @greeting OUT,  @testDate OUT",
-                    sqlId, sqlOutCode, sqlOutGreeting, sqlOutTestDate);
+                var result = this.Database.ExecuteSqlCommand(
+                    "exec dbo.nyra_GetWelcomeInfo @id, @ver OUT, @greeting OUT,  @testDate OUT, @test OUT",
+                    sqlId, sqlOutCode, sqlOutGreeting, sqlOutTestDate,sqlOutTest);
 
                 ver = (int)sqlOutCode.Value;
                 greeting = (string)sqlOutGreeting.Value;
