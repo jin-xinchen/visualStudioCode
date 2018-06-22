@@ -32,6 +32,10 @@ namespace TodoApi
             var s4 = ConfigurationExtensions.GetConnectionString(Configuration, "cc");
             var s5 = ConfigurationExtensions.GetConnectionString(Configuration, "aa:cc");
             var s = $"Test==>{s5}";
+            var s6 = Configuration.GetConnectionString("aa:cc");
+            var s7 = Configuration.GetConnectionString("DefaultConnection1");
+            var s8 = Configuration.GetConnectionString("Log_path");
+            var s9 = Configuration["Log_path"];
 
         
 
