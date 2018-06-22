@@ -13,6 +13,9 @@ namespace TodoApi
         {
             services.AddDbContext<TodoContext>(
                 opt => opt.UseInMemoryDatabase("TodoList"));
+                
+            services.AddDbContext<TodoContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -23,10 +26,10 @@ namespace TodoApi
             app.UseStaticFiles();
             app.UseMvc();
         }
-    
+    IConfiguration Configuration;
         public Startup(IConfiguration configuration)
         {
-            IConfiguration Configuration = configuration;
+            this.Configuration = configuration;
             var s1 = ConfigurationExtensions.GetConnectionString(Configuration, "DefaultConnection");
             var s2 = ConfigurationExtensions.GetConnectionString(Configuration, "Connection");
             var s4 = ConfigurationExtensions.GetConnectionString(Configuration, "cc");
