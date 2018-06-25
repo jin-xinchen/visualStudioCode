@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TodoApi.Models;
+using TodoApi.Helper;
 
 namespace TodoApi.Controllers
 {
@@ -19,7 +20,9 @@ namespace TodoApi.Controllers
         {
             var s = Request;
             _context = context;
+            
             System.Console.WriteLine("=Start:"+ ++CountDbContext +"==============");
+            Console.WriteLine();
             System.Console.WriteLine("=Start:"+ ++CountDbContext1 +"=======instance=======");
             if (_context.TodoItems.Count() == 0)
             {
@@ -41,6 +44,18 @@ namespace TodoApi.Controllers
             //  $"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}"+request.ToString());
             // System.Console.WriteLine("==RequireHttpsAttribute==>:"+$"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}");
             var s = Request;
+            var sRequest = this.HttpContext.Request;
+            var rH= sRequest.Headers;
+            Console.WriteLine();
+            Console.WriteLine($"Method=={sRequest.Method} ");
+            Console.WriteLine($"Protocol=={sRequest.Protocol} ");
+            foreach(var sHead in rH)
+            {
+               Console.WriteLine($"{sHead.Key}=={sHead.Value}");
+            }
+
+            Console.WriteLine(Utils.GetJSONofHeader(sRequest));
+
             return _context.TodoItems.ToList();
         }
 
@@ -121,12 +136,19 @@ namespace TodoApi.Controllers
             // You need to add a reference to System.Net.Http to declare client.  
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();  
 
+            string url0 ="http://docs.microsoft.com";
+            Console.WriteLine($"20=== characters"); 
+            byte[] urlContents1 = await client.GetByteArrayAsync(url0);
+            Console.WriteLine($"21==={url0}: {urlContents1.Length/2:N0} characters"); 
+
+            string url ="http://msdn.microsoft.com"; 
             // GetStringAsync returns a Task<string>. That means that when you await the  
             // task you'll get a string (urlContents).  
-            Task<string> getStringTask = client.GetStringAsync("http://msdn.microsoft.com");  
-
+            Task<string> getStringTask = client.GetStringAsync(url);  
+            var uri = new Uri(Uri.EscapeUriString(url));
             // You can do work here that doesn't rely on the string from GetStringAsync.  
-            DoIndependentWork();  
+            DoIndependentWork(); 
+             
             // The await operator suspends AccessTheWebAsync.  
             //  - AccessTheWebAsync can't continue until getStringTask is complete.  
             //  - Meanwhile, control returns to the caller of AccessTheWebAsync.  
