@@ -19,6 +19,19 @@ namespace TodoApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                // .UseKestrel()
+                // .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://localhost:5006/")
                 .UseStartup<Startup>();
+
+
+
+// WebHost.CreateDefaultBuilder(args)
+//                 .UseKestrel()
+//                 .UseContentRoot(Directory.GetCurrentDirectory())
+//                 .UseUrls("http://*:5001")
+//                 .UseStartup<Startup>()
+//                 .Build();
+
     }
 }
