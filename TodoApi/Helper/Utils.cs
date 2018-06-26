@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -50,6 +51,10 @@ namespace TodoApi.Helper
 // X-Requested-With==XMLHttpRequest
 
             sHeader = JsonConvert.SerializeObject(dD);  
+
+            var obj = JsonConvert.DeserializeObject<Dictionary<string,string>>(sHeader);
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\Names.txt");
+// string[] files = File.ReadAllLines(path);
             return sHeader;
         }
     }

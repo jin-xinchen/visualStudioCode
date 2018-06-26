@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using TodoApi.Helper;
 
 namespace TodoApi.Models
 {
@@ -10,10 +11,14 @@ namespace TodoApi.Models
         public TodoContext(DbContextOptions<TodoContext> options)
             : base(options)
         {
-            System.Console.WriteLine("------------> DbContext");
-            
+    
+            // System.Console.WriteLine("------------> DbContext");
+            System.Console.WriteLine($"DbContextOptions<TodoContext> options==>{options.GetHashCode()} {options.GetType().FullName}");
+            double d = System.Math.PI; 
+            double d1 = d.Round(4);
         }
-
+        
+        public int MyTest { get; set; }
         public DbSet<TodoItem> TodoItems { get; set; }
 
          public System.Collections.Generic.List<TodoItem> GetTodoItems(string date)

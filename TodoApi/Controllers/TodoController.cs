@@ -18,12 +18,14 @@ namespace TodoApi.Controllers
 
         public TodoController(TodoContext context)
         {
+            context.MyTest=9;
+            System.Console.WriteLine($"DbContextOptions<TodoContext> options==>{context.GetHashCode()} {context.GetType().FullName}");
             var s = Request;
             _context = context;
             
-            System.Console.WriteLine("=Start:"+ ++CountDbContext +"==============");
-            Console.WriteLine();
-            System.Console.WriteLine("=Start:"+ ++CountDbContext1 +"=======instance=======");
+            // System.Console.WriteLine("=Start:"+ ++CountDbContext +"==============");
+            // Console.WriteLine();
+            // System.Console.WriteLine("=Start:"+ ++CountDbContext1 +"=======instance=======");
             if (_context.TodoItems.Count() == 0)
             {
                 _context.TodoItems.Add(new TodoItem { Name = "Item1" });
@@ -46,15 +48,15 @@ namespace TodoApi.Controllers
             var s = Request;
             var sRequest = this.HttpContext.Request;
             var rH= sRequest.Headers;
-            Console.WriteLine();
-            Console.WriteLine($"Method=={sRequest.Method} ");
-            Console.WriteLine($"Protocol=={sRequest.Protocol} ");
-            foreach(var sHead in rH)
-            {
-               Console.WriteLine($"{sHead.Key}=={sHead.Value}");
-            }
+            // Console.WriteLine();
+            // Console.WriteLine($"Method=={sRequest.Method} ");
+            // Console.WriteLine($"Protocol=={sRequest.Protocol} ");
+            // foreach(var sHead in rH)
+            // {
+            //    Console.WriteLine($"{sHead.Key}=={sHead.Value}");
+            // }
 
-            Console.WriteLine(Utils.GetJSONofHeader(sRequest));
+            // Console.WriteLine(Utils.GetJSONofHeader(sRequest));
 
             return _context.TodoItems.ToList();
         }
@@ -69,7 +71,7 @@ namespace TodoApi.Controllers
             }
 
             int contentLength = await this.AccessTheWebAsync();  
-            Console.WriteLine("4====>"+contentLength);
+            // Console.WriteLine("4====>"+contentLength);
             return item;
         }
         //Add the following Create method:
@@ -137,9 +139,9 @@ namespace TodoApi.Controllers
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();  
 
             string url0 ="http://docs.microsoft.com";
-            Console.WriteLine($"20=== characters"); 
+            // Console.WriteLine($"20=== characters"); 
             byte[] urlContents1 = await client.GetByteArrayAsync(url0);
-            Console.WriteLine($"21==={url0}: {urlContents1.Length/2:N0} characters"); 
+            // Console.WriteLine($"21==={url0}: {urlContents1.Length/2:N0} characters"); 
 
             string url ="http://msdn.microsoft.com"; 
             // GetStringAsync returns a Task<string>. That means that when you await the  
@@ -155,10 +157,10 @@ namespace TodoApi.Controllers
             //  - Control resumes here when getStringTask is complete.   
             //  - The await operator then retrieves the string result from getStringTask.  
             string urlContents = await getStringTask;  
-            Console.WriteLine("2====>"+urlContents.ToString().Substring(0,16));
-            Console.WriteLine();
-            Console.WriteLine("3====>"+getStringTask.ToString());
-            Console.WriteLine();
+            // Console.WriteLine("2====>"+urlContents.ToString().Substring(0,16));
+            // Console.WriteLine();
+            // Console.WriteLine("3====>"+getStringTask.ToString());
+            // Console.WriteLine();
             // The return statement specifies an integer result.  
             // Any methods that are awaiting AccessTheWebAsync retrieve the length value.  
             return urlContents.Length;  
@@ -167,9 +169,9 @@ namespace TodoApi.Controllers
         void DoIndependentWork()  
         {  
             string resultsTextBox = "Working . . . . . . .\r\n";  
-            Console.WriteLine();
-            Console.WriteLine("1====>"+resultsTextBox);
-            Console.WriteLine();
+            // Console.WriteLine();
+            // Console.WriteLine("1====>"+resultsTextBox);
+            // Console.WriteLine();
 
 
         } 
