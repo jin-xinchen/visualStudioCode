@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;//database
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TodoApi.Models; //self 
+using CorrelationId;
 
 namespace TodoApi
 {
@@ -18,12 +19,17 @@ namespace TodoApi
 
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddCorrelationId();
         }
 
         public void Configure(IApplicationBuilder app)
         {
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseCorrelationId("testRelationID");
+            
             app.UseMvc();
         }
     IConfiguration Configuration;

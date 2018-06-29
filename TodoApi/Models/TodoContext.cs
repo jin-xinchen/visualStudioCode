@@ -3,19 +3,27 @@ using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Helper;
+using System;
 
 namespace TodoApi.Models
 {
     public class TodoContext : DbContext
     {
+        static ulong Amount=0;
         public TodoContext(DbContextOptions<TodoContext> options)
             : base(options)
         {
     
             // System.Console.WriteLine("------------> DbContext");
-            System.Console.WriteLine($"DbContextOptions<TodoContext> options==>{options.GetHashCode()} {options.GetType().FullName}");
+            Console.WriteLine($"DbContextOptions<TodoContext> options==>{options.GetHashCode()} {options.GetType().FullName}");
+            Console.WriteLine($"TodoContext:{++Amount}");
+            Console.WriteLine();
+
             double d = System.Math.PI; 
             double d1 = d.Round(4);
+        }
+        ~TodoContext(){
+            Console.WriteLine($"TodoContext:{--Amount}");
         }
         
         public int MyTest { get; set; }

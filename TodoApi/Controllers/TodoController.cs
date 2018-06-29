@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TodoApi.Models;
 using TodoApi.Helper;
+using CorrelationId;
 
 namespace TodoApi.Controllers
 {
@@ -12,25 +13,34 @@ namespace TodoApi.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        private readonly TodoContext _context;  
-        static ulong CountDbContext=0L;
-        ulong CountDbContext1=0L;
-
-        public TodoController(TodoContext context)
+        private readonly TodoContext _context;
+        static ulong CountDbContext = 0L;
+        private readonly ICorrelationContextAccessor _correlationContext;
+        private const string CorrelationIdHeaderName = "X-Correlation-Id";
+        public TodoController(TodoContext context, ICorrelationContextAccessor correlationContext)
         {
-            context.MyTest=9;
+            _correlationContext = correlationContext;
+            CountDbContext++;
+            Console.WriteLine($"TodoController:{CountDbContext}");
+            Console.WriteLine();
+            context.MyTest = 9;
             System.Console.WriteLine($"DbContextOptions<TodoContext> options==>{context.GetHashCode()} {context.GetType().FullName}");
+
             var s = Request;
             _context = context;
-            
-            // System.Console.WriteLine("=Start:"+ ++CountDbContext +"==============");
-            // Console.WriteLine();
-            // System.Console.WriteLine("=Start:"+ ++CountDbContext1 +"=======instance=======");
+
             if (_context.TodoItems.Count() == 0)
             {
                 _context.TodoItems.Add(new TodoItem { Name = "Item1" });
                 _context.SaveChanges();
             }
+        }
+
+        ~TodoController()
+        {
+            CountDbContext--;
+            Console.WriteLine($"--->TodoController:{CountDbContext}");
+            Console.WriteLine();
         }
 
         [HttpGet]
@@ -42,19 +52,23 @@ namespace TodoApi.Controllers
         // public ActionResult<List<TodoItem>> GetAll([FromServices]object request)//error
         public ActionResult<List<TodoItem>> GetAll()
         {
-            //  System.Console.WriteLine("==RequireHttpsAttribute==>:"+
-            //  $"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}"+request.ToString());
-            // System.Console.WriteLine("==RequireHttpsAttribute==>:"+$"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}");
+            Console.WriteLine($"Count:{CountDbContext}");
+            var correlation = _correlationContext.CorrelationContext.CorrelationId;
+            //   System.Console.WriteLine("==RequireHttpsAttribute==>:"+
+            //   $"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}"+request.ToString());
+            //  System.Console.WriteLine("==RequireHttpsAttribute==>:"+$"Get {Newtonsoft.Json.JsonConvert.SerializeObject(request)}");
             var s = Request;
             var sRequest = this.HttpContext.Request;
-            var rH= sRequest.Headers;
-            // Console.WriteLine();
-            // Console.WriteLine($"Method=={sRequest.Method} ");
-            // Console.WriteLine($"Protocol=={sRequest.Protocol} ");
-            // foreach(var sHead in rH)
-            // {
-            //    Console.WriteLine($"{sHead.Key}=={sHead.Value}");
-            // }
+            var rH = sRequest.Headers;
+            rH.Add(CorrelationIdHeaderName,correlation);
+            Console.WriteLine();
+            Console.WriteLine($"Method=={sRequest.Method} ");
+            Console.WriteLine($"Protocol=={sRequest.Protocol} ");
+            foreach (var sHead in rH)
+            {
+                Console.WriteLine($"{sHead.Key}=={sHead.Value}");
+            }
+
 
             // Console.WriteLine(Utils.GetJSONofHeader(sRequest));
 
@@ -70,7 +84,7 @@ namespace TodoApi.Controllers
                 return NotFound();
             }
 
-            int contentLength = await this.AccessTheWebAsync();  
+            int contentLength = await this.AccessTheWebAsync();
             // Console.WriteLine("4====>"+contentLength);
             return item;
         }
@@ -133,48 +147,48 @@ namespace TodoApi.Controllers
         //  - The return type is Task or Task<T>. (See "Return Types" section.)  
         //    Here, it is Task<int> because the return statement returns an integer.  
         //  - The method name ends in "Async."  
-        async Task<int> AccessTheWebAsync()  
+        async Task<int> AccessTheWebAsync()
         {
             // You need to add a reference to System.Net.Http to declare client.  
-            System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();  
+            System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
-            string url0 ="http://docs.microsoft.com";
+            string url0 = "http://docs.microsoft.com";
             // Console.WriteLine($"20=== characters"); 
             byte[] urlContents1 = await client.GetByteArrayAsync(url0);
             // Console.WriteLine($"21==={url0}: {urlContents1.Length/2:N0} characters"); 
 
-            string url ="http://msdn.microsoft.com"; 
+            string url = "http://msdn.microsoft.com";
             // GetStringAsync returns a Task<string>. That means that when you await the  
             // task you'll get a string (urlContents).  
-            Task<string> getStringTask = client.GetStringAsync(url);  
+            Task<string> getStringTask = client.GetStringAsync(url);
             var uri = new Uri(Uri.EscapeUriString(url));
             // You can do work here that doesn't rely on the string from GetStringAsync.  
-            DoIndependentWork(); 
-             
+            DoIndependentWork();
+
             // The await operator suspends AccessTheWebAsync.  
             //  - AccessTheWebAsync can't continue until getStringTask is complete.  
             //  - Meanwhile, control returns to the caller of AccessTheWebAsync.  
             //  - Control resumes here when getStringTask is complete.   
             //  - The await operator then retrieves the string result from getStringTask.  
-            string urlContents = await getStringTask;  
+            string urlContents = await getStringTask;
             // Console.WriteLine("2====>"+urlContents.ToString().Substring(0,16));
             // Console.WriteLine();
             // Console.WriteLine("3====>"+getStringTask.ToString());
             // Console.WriteLine();
             // The return statement specifies an integer result.  
             // Any methods that are awaiting AccessTheWebAsync retrieve the length value.  
-            return urlContents.Length;  
-        }  
+            return urlContents.Length;
+        }
 
-        void DoIndependentWork()  
-        {  
-            string resultsTextBox = "Working . . . . . . .\r\n";  
+        void DoIndependentWork()
+        {
+            string resultsTextBox = "Working . . . . . . .\r\n";
             // Console.WriteLine();
             // Console.WriteLine("1====>"+resultsTextBox);
             // Console.WriteLine();
 
 
-        } 
-        
+        }
+
     }
 }
