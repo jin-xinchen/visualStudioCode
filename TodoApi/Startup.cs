@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TodoApi.Models; //self 
 using CorrelationId;
 
+using Swashbuckle.AspNetCore.Swagger;
 namespace TodoApi
 {
     public class Startup
@@ -14,13 +15,18 @@ namespace TodoApi
         {
             services.AddDbContext<TodoContext>(
                 opt => opt.UseInMemoryDatabase("TodoList"));
-                
+
             services.AddDbContext<TodoContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddCorrelationId();
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app)
@@ -29,10 +35,10 @@ namespace TodoApi
             app.UseStaticFiles();
 
             app.UseCorrelationId("testRelationID");
-            
+
             app.UseMvc();
         }
-    IConfiguration Configuration;
+        IConfiguration Configuration;
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
@@ -46,8 +52,8 @@ namespace TodoApi
             var s8 = Configuration.GetConnectionString("Log_path");
             var s9 = Configuration["Log_path"];
 
-        
 
-        }    
+
+        }
     }
 }
