@@ -13,6 +13,7 @@ export function activate(context: ExtensionContext) {
 
     // create a new word counter
     let wordCounter = new WordCounter();
+    let controller = new WordCounterController(wordCounter);
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
@@ -30,6 +31,7 @@ export function activate(context: ExtensionContext) {
         // Display a message box to the user
         // window.showInformationMessage('Hello World!');
     });
+    context.subscriptions.push(controller);
     context.subscriptions.push(wordCounter);
     context.subscriptions.push(disposable);
 }
@@ -82,5 +84,34 @@ class WordCounter {
 
     dispose() {
         this._statusBarItem.dispose();
+    }
+}
+
+class WordCounterController {
+
+    private _wordCounter: WordCounter;
+    private _disposable: Disposable;
+
+    constructor(wordCounter: WordCounter) {
+        this._wordCounter = wordCounter;
+
+        // subscribe to selection change and editor activation events
+        let subscriptions: Disposable[] = [];
+        window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
+        window.onDidChangeActiveTextEditor(this._onEvent, this, subscriptions);
+
+        // update the counter for the current file
+        this._wordCounter.updateWordCount();
+
+        // create a combined disposable from both event subscriptions
+        this._disposable = Disposable.from(...subscriptions);
+    }
+
+    dispose() {
+        this._disposable.dispose();
+    }
+
+    private _onEvent() {
+        this._wordCounter.updateWordCount();
     }
 }
